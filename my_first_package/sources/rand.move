@@ -2,7 +2,7 @@ module hello_world::random {
     use std::hash;
     use std::vector;
     use sui::object::{Self,UID};
-    use sui::tx_context::{Self, TxContext};
+    use sui::tx_context::{ TxContext};
 
     // Internally, the pseudorandom generator uses a hash chain over Sha3-256
     // which has an output length of 32 bytes.
@@ -43,7 +43,7 @@ module hello_world::random {
         if (remainder > 0) {
             let (i, digest) = (0, next_digest(random));
             while (i < remainder) {
-                vector::push_back(&mut output, *vector::borrow(&mut digest, i));
+                vector::push_back(&mut output, *vector::borrow(&digest, i));
                 i = i + 1;
             };
         };
