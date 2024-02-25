@@ -10,7 +10,7 @@ import env from "dotenv";
 env.config();
 
 // see Network Interactions with SuiClient for more info on creating clients
-const client = new SuiClient({ url: getFullnodeUrl("localnet") });
+const client = new SuiClient({ url: getFullnodeUrl("testnet") });
 
 // let flag = true;
 // let objectList = [];
@@ -41,8 +41,13 @@ const client = new SuiClient({ url: getFullnodeUrl("localnet") });
 // console.log('objectList.length: ', objectList.length)
 // console.log('objects: ', JSON.stringify(objectList, null, 2))
 
-for (let i = 0; i < 10; i++) {
+for (let i = 0; i < 1; i++) {
 	const txb = new TransactionBlock();
+	// the amount to split off the gas coin is provided as a pure javascript number
+	const [coin] = txb.splitCoins(txb.gas, [1000000000]);
+  console.log('coin: ', coin)
+	// the address for the transfer is provided as a pure javascript string
+	// txb.transferObjects([coin], "0x1c3a070bfb62a0bd48a87f69b38c2ecf8772dee0e9186ca3a2162f476143ae7b");
 	// ... add some transactions...
 
 	// sui client call --package 0x4484552bbd2f87f83896b6298f2fb26f5e0d8fe3b007e26d81b12fcd990faa82 --module puppy --function mint --args 0x8eaca0322bda4e0061fdedd883b838a0b
@@ -50,13 +55,12 @@ for (let i = 0; i < 10; i++) {
 	let a = txb.moveCall({
 		arguments: [
 			txb.object(
-				"0x4f7d9167d7ca85c301770aed9eaf0f9af6cd6a515f9d9135556865447deb3e6a",
+				"0x38756c5b1981d8f68bf348a8b90f40246df32e982322e62aef0ed4e8280e0d92",
 			),
-			txb.pure.string("bethatguyad"),
-			txb.pure.string("https://avatars.githubusercontent.com/u/160697994?s=400&u=d802beaccf8a2c2066a6c81729a850a3ca972927&v=4"),
+      coin,
 		],
 		target:
-			"0xabc61240a9ece2d963f1eac9f929d0b97c815159d00e8b83e3b76ccbd4cd9afd::puppy::mint",
+			"0x4ccd7d2ede53eef1d036ad555d0046ab59dda9b57e448f6176387b7ed0e19b68::game::add_prize_pool",
 	});
 	//
 	// console.log("a: ", a);
@@ -66,7 +70,7 @@ for (let i = 0; i < 10; i++) {
 	);
 
 	//
-	txb.setGasBudget(10000000);
+	txb.setGasBudget(1002000000);
 	const bytes = await txb.build({ client });
 	//
 	// //
@@ -76,8 +80,8 @@ for (let i = 0; i < 10; i++) {
 	// // if you have a public key, you can verify it
 	// //   const isValid = await publicKey.verifyTransactionBlock(bytes, signature);
 	// // or get the public key from the transaction block
-	const publicKey = await verifyTransactionBlock(bytes, signature);
-	// console.log("addr: ", publicKey.toSuiAddress());
+	// const publicKey = await verifyTransactionBlock(bytes, signature);
+	// // console.log("addr: ", publicKey.toSuiAddress());
 	//
 	const res = await client.executeTransactionBlock({
 		signature: signature,

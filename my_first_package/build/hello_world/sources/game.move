@@ -79,10 +79,9 @@ module hello_world::game {
 
         };
 
+        event::emit(Status {status: status });
         if (status == 2) {
-
-            event::emit(Status {status: status });
-            let b = balance::split(&mut shop.prize_pool, 100000);
+            let b = balance::split(&mut shop.prize_pool, 10000);
             let c = coin::from_balance(b, ctx);
             transfer::public_transfer(c, tx_context::sender(ctx));
         }
